@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strata — GATE Study Planner</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%230F1419%22/><rect x=%2222%22 y=%2255%22 width=%2214%22 height=%2228%22 fill=%22%23E8862C%22/><rect x=%2243%22 y=%2238%22 width=%2214%22 height=%2245%22 fill=%22%23E8862C%22/><rect x=%2264%22 y=%2222%22 width=%2214%22 height=%2261%22 fill=%22%23E8862C%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 100 100" width="22" height="22">
+      <rect x="22" y="55" width="14" height="28" fill="currentColor"/>
+      <rect x="43" y="38" width="14" height="45" fill="currentColor"/>
+      <rect x="64" y="22" width="14" height="61" fill="currentColor"/>
+    </svg>
+    <span class="brand-name">Strata</span>
+    <span class="brand-tag">GATE planner</span>
+  </div>
+  <div class="exam-countdown" id="examCountdown">
+    <button class="set-exam-btn" id="setExamBtn" title="Set exam date">set exam date</button>
+  </div>
+</header>
+
+<main class="dashboard">
+
+  <!-- LEFT: Subjects -->
+  <section class="panel panel-subjects">
+    <div class="panel-head">
+      <h2>Subjects</h2>
+      <button class="icon-btn" id="addSubjectBtn" aria-label="Add subject">+ add</button>
+    </div>
+    <div class="subject-list" id="subjectList">
+      <!-- populated by JS -->
+    </div>
+    <p class="empty-hint" id="subjectEmptyHint">No subjects yet. Add your first GATE paper topic — Data Structures, TOC, Networks, anything.</p>
+  </section>
+
+  <!-- CENTER: Timer + Today's plan -->
+  <section class="panel panel-timer">
+    <div class="panel-head">
+      <h2>Focus session</h2>
+      <span class="mode-pill" id="modePill">Pomodoro</span>
+    </div>
+
+    <div class="timer-stage">
+      <svg class="timer-ring" viewBox="0 0 240 240">
+        <circle class="ring-track" cx="120" cy="120" r="108"></circle>
+        <circle class="ring-progress" id="ringProgress" cx="120" cy="120" r="108"></circle>
+      </svg>
+      <div class="timer-readout">
+        <span class="timer-clock" id="timerClock">25:00</span>
+        <span class="timer-label" id="timerSubject">pick a subject</span>
+      </div>
+    </div>
+
+    <div class="timer-controls">
+      <button class="btn-ghost" id="resetBtn">reset</button>
+      <button class="btn-primary" id="startPauseBtn">start</button>
+      <button class="btn-ghost" id="skipBtn">skip</button>
+    </div>
+
+    <div class="timer-settings">
+      <label>focus
+        <input type="number" id="focusMins" value="25" min="1" max="120">
+      </label>
+      <label>short break
+        <input type="number" id="shortBreakMins" value="5" min="1" max="60">
+      </label>
+      <label>long break
+        <input type="number" id="longBreakMins" value="15" min="1" max="60">
+      </label>
+      <label>sessions / cycle
+        <input type="number" id="cycleLength" value="4" min="1" max="12">
+      </label>
+    </div>
+
+    <div class="today-plan">
+      <div class="panel-head">
+        <h3>Today's plan</h3>
+        <button class="icon-btn" id="addTaskBtn" aria-label="Add task">+ add</button>
+      </div>
+      <ul class="task-list" id="taskList"></ul>
+      <p class="empty-hint" id="taskEmptyHint">Nothing planned for today yet.</p>
+    </div>
+  </section>
+
+  <!-- RIGHT: Streak + Calendar -->
+  <section class="panel panel-streak">
+    <div class="panel-head">
+      <h2>Streak</h2>
+      <div class="streak-count" id="streakCount">
+        <span class="streak-number">0</span>
+        <span class="streak-word">day streak</span>
+      </div>
+    </div>
+    <div class="contribution-graph" id="contributionGraph"></div>
+    <div class="graph-legend">
+      <span>less</span>
+      <span class="legend-swatch lvl-0"></span>
+      <span class="legend-swatch lvl-1"></span>
+      <span class="legend-swatch lvl-2"></span>
+      <span class="legend-swatch lvl-3"></span>
+      <span class="legend-swatch lvl-4"></span>
+      <span>more</span>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-block">
+        <span class="stat-number" id="statToday">0m</span>
+        <span class="stat-label">today</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-number" id="statWeek">0m</span>
+        <span class="stat-label">this week</span>
+      </div>
+      <div class="stat-block">
+        <span class="stat-number" id="statTotal">0m</span>
+        <span class="stat-label">all time</span>
+      </div>
+    </div>
+
+    <div class="panel-head" style="margin-top: 1.75rem;">
+      <h3>This month</h3>
+    </div>
+    <div class="calendar-nav">
+      <button class="icon-btn" id="calPrev">&larr;</button>
+      <span id="calMonthLabel">Month Year</span>
+      <button class="icon-btn" id="calNext">&rarr;</button>
+    </div>
+    <div class="month-calendar" id="monthCalendar"></div>
+  </section>
+
+</main>
+
+<footer class="foot-note">
+  <span>Strata — your data lives only in this browser (localStorage). Nothing is sent anywhere.</span>
+</footer>
+
+<!-- Modal: Add subject -->
+<dialog id="subjectModal" class="modal">
+  <form id="subjectForm" class="modal-form">
+    <h3>Add subject</h3>
+    <label>Name
+      <input type="text" id="subjectName" placeholder="e.g. Operating Systems" required maxlength="40">
+    </label>
+    <label>Color
+      <div class="color-swatches" id="colorSwatches"></div>
+    </label>
+    <label>Target hours (total prep goal)
+      <input type="number" id="subjectTarget" placeholder="e.g. 40" min="1" max="999">
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="cancelSubjectBtn">cancel</button>
+      <button type="submit" class="btn-primary">add subject</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Add task -->
+<dialog id="taskModal" class="modal">
+  <form id="taskForm" class="modal-form">
+    <h3>Add task</h3>
+    <label>Subject
+      <select id="taskSubject" required></select>
+    </label>
+    <label>What will you study?
+      <input type="text" id="taskTitle" placeholder="e.g. Finish B-Trees + 10 PYQs" required maxlength="80">
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="cancelTaskBtn">cancel</button>
+      <button type="submit" class="btn-primary">add task</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal: Set exam date -->
+<dialog id="examModal" class="modal">
+  <form id="examForm" class="modal-form">
+    <h3>Set exam date</h3>
+    <label>GATE exam date
+      <input type="date" id="examDateInput" required>
+    </label>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="cancelExamBtn">cancel</button>
+      <button type="submit" class="btn-primary">save</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
