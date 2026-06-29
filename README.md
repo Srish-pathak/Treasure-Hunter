@@ -1,6 +1,6 @@
 # Strata
 
-A focused, single-page study planner built for GATE (and any exam) prep. No sign-up, no backend, no tracking — everything is stored locally in your browser.
+A focused, single-page study planner built for exam prep. No sign-up, no backend, no tracking — everything is stored locally in your browser.
 
 **[Live demo →](#)** *(replace with your GitHub Pages link once deployed — see below)*
 
