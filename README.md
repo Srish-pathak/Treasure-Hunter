@@ -1,4 +1,4 @@
-# Strata — GATE Study Planner
+# Strata
 
 A focused, single-page study planner built for GATE (and any exam) prep. No sign-up, no backend, no tracking — everything is stored locally in your browser.
 
@@ -11,7 +11,7 @@ A focused, single-page study planner built for GATE (and any exam) prep. No sign
 - **Daily plan** — a simple checklist of what you want to get through today, tied to a subject.
 - **Streak system** — a GitHub-style contribution graph that fills in as you study. Tracks current streak and longest streak.
 - **Calendar view** — month-by-month view of which days you studied.
-- **Exam countdown** — set your GATE date and see days remaining at a glance.
+- **Exam countdown** — set your date and see days remaining at a glance.
 
 All data lives in `localStorage` in your browser. Nothing is sent to a server. If you clear your browser data or switch devices, your progress won't carry over (by design — no accounts needed).
 
